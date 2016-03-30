@@ -1,0 +1,167 @@
+%{
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
+#include <string.h>
+#include <vector>
+#include <map>
+
+#include <QtGui>
+#include <QApplication>
+
+#include "monDessin.h"
+
+#include "Figure.hpp"
+#include "Option.hpp"
+#include "Rectangle.hpp"
+#include "Cercle.hpp"
+#include "Ligne.hpp"
+
+#include "global.h"
+
+#define YYERROR_VERBOSE
+#define USE(VALUE) /*empty*/
+
+
+extern "C" int yyparse (void);
+extern "C" int yylex(void);
+extern "C" void yyerror(const std::string&);
+extern FILE* yyin;
+
+std::vector<Figure> liste_figures;
+std::vector<int> which_figure;
+
+enum type_option { couleur, rotation, remplissage, epaisseur, opacite };
+enum nom_forme { rectangle, cercle, ligne };
+enum nom_couleur { rouge, vert, bleu, jaune, noir, blanc, gris };
+
+std::map<type_option, typegeneral> options_separees;
+
+QPointer<monDessin> D;
+
+%}
+
+%union{
+double valeur_numerique;
+char indice_table_symboles;
+int entier;
+Figure figure;
+Option opt;
+}
+
+%token<valeur_numerique> NOMBRE
+%token<entier> NOM_FORME
+%token<entier> COULEUR
+%token<entier> REMPLISSAGE
+%token<entier> ROTATION
+%token<valeur_numerique> OPACITE
+%token MOT_COULEUR MOT_EPAISSEUR MOT_OPACITE MOT_REMPLISSAGE MOT_ROTATION
+%token PARENTHESE_OUVRANTE PARENTHESE_FERMANTE
+%token ACCOLADE_OUVRANTE ACCOLADE_FERMANTE
+%token EGAL
+%token VIRGULE
+%token POURCENT
+%token DEGRE
+%token FIN
+%token END
+
+%type<opt> liste_options
+%type<figure> Expression_Complete
+%type<figure> DeclarationForme
+
+%left VARIABLE
+
+%start Input
+%%
+Input:
+	/* Vide */
+	| Input Ligne
+	;
+
+Ligne:
+	FIN
+	| Expression_Complete FIN { std::cout << "forme en une ligne" << std::endl; }
+	| Expression_longue FIN { std::cout << "forme avec params sur plusieurs lignes" << std::endl; }
+	| END FIN 				{printf("fin du programme\n"); return 0;}
+	;
+
+Expression_Complete:
+	NOM_FORME PARENTHESE_OUVRANTE NOMBRE VIRGULE NOMBRE VIRGULE NOMBRE VIRGULE NOMBRE PARENTHESE_FERMANTE ACCOLADE_OUVRANTE liste_options ACCOLADE_FERMANTE
+	{ 
+		which_figure.push_back($1);
+		Figure fig($3,$5,$7,$9);
+		fig.setOption($12);
+		liste_figures.push_back(fig);
+		$$= fig;
+	}
+	;
+
+liste_options:
+	FIN { Option vide; $$= vide; }
+	| COULEUR VIRGULE NOMBRE VIRGULE REMPLISSAGE VIRGULE ROTATION VIRGULE OPACITE
+	{ std::cout << "options en une ligne" << std::endl; Option tmp($1, $3, $5, $7, $9); $$= tmp;}
+	;
+
+Option:
+	MOT_COULEUR EGAL COULEUR FIN { std::cout << "affectation couleur" << std::endl;
+										type_option id_col= couleur;
+										typegeneral col; col.entier= $3;
+										std::pair<type_option, typegeneral> current_opt= std::make_pair(id_col, col);
+										options_separees.insert(current_opt);
+								 }
+
+	| MOT_ROTATION EGAL NOMBRE DEGRE FIN { std::cout << "affectation rotation" << std::endl;
+										
+								 }
+	| MOT_REMPLISSAGE EGAL REMPLISSAGE FIN { std::cout << "affectation remplisage" << std::endl;
+										
+								 }
+	| MOT_EPAISSEUR EGAL NOMBRE FIN { std::cout << "affectation epaisseur" << std::endl;
+										
+								 }
+	| MOT_OPACITE EGAL NOMBRE POURCENT FIN { std::cout << "affectation opacite" << std::endl;
+										
+								 }
+	;
+
+Options:
+	FIN { std::cout << "fin des options separees" << std::endl; }
+	| Option Options { std::cout << "ajout d'une option" << std::endl; }
+	;
+
+DeclarationForme:
+	NOM_FORME PARENTHESE_OUVRANTE NOMBRE VIRGULE NOMBRE VIRGULE NOMBRE VIRGULE NOMBRE PARENTHESE_FERMANTE ACCOLADE_OUVRANTE FIN
+	{ std::cout << "forme + coordonnees + params " << std::endl; 
+	  which_figure.push_back($1);
+	  Figure fig($3,$5,$7,$9);
+	  liste_figures.push_back(fig);
+	  $$= fig;
+	}
+	;
+
+Expression_longue:
+	DeclarationForme Options FIN ACCOLADE_FERMANTE FIN
+	{ std::cout << "Forme avec options sur differentes lignes" << std::endl; }
+	;
+
+%%
+
+
+void trace(QMainWindow * w){
+	D = new monDessin;	
+	w->setCentralWidget(D);
+    w->setMinimumSize(800, 600);
+	yyparse();
+
+	D->setFigures(liste_figures);
+	D->setWhichFigure(which_figure);
+
+	D->draw();
+	w->show();
+	return	;
+}
+
+void yyerror(const std::string& mess){
+    std::cout << mess << std::endl;
+}
