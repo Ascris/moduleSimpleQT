@@ -49,24 +49,22 @@ extern int yydebug;
     NOM_FORME = 259,
     COULEUR = 260,
     REMPLISSAGE = 261,
-    ROTATION = 262,
-    OPACITE = 263,
-    MOT_COULEUR = 264,
-    MOT_EPAISSEUR = 265,
-    MOT_OPACITE = 266,
-    MOT_REMPLISSAGE = 267,
-    MOT_ROTATION = 268,
-    PARENTHESE_OUVRANTE = 269,
-    PARENTHESE_FERMANTE = 270,
-    ACCOLADE_OUVRANTE = 271,
-    ACCOLADE_FERMANTE = 272,
-    EGAL = 273,
-    VIRGULE = 274,
-    POURCENT = 275,
-    DEGRE = 276,
-    FIN = 277,
-    END = 278,
-    VARIABLE = 279
+    MOT_COULEUR = 262,
+    MOT_EPAISSEUR = 263,
+    MOT_OPACITE = 264,
+    MOT_REMPLISSAGE = 265,
+    MOT_ROTATION = 266,
+    PARENTHESE_OUVRANTE = 267,
+    PARENTHESE_FERMANTE = 268,
+    ACCOLADE_OUVRANTE = 269,
+    ACCOLADE_FERMANTE = 270,
+    EGAL = 271,
+    VIRGULE = 272,
+    POURCENT = 273,
+    DEGRE = 274,
+    FIN = 275,
+    END = 276,
+    VARIABLE = 277
   };
 #endif
 
@@ -83,7 +81,7 @@ int entier;
 Figure figure;
 Option opt;
 
-#line 87 "parser.tab.hpp" /* yacc.c:1909  */
+#line 85 "parser.tab.hpp" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

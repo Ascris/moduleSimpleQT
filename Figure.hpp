@@ -17,6 +17,7 @@ public:
 	int getZ() {return z;};
 	int getT() {return t;};
 
+	Option getOption() const { return fig_opt; };
 	void set_option(int col, int epaisseur, bool remp, int rot, double opacite);
 	void setOption(Option opt) { fig_opt= opt; };
 };
