@@ -1,0 +1,18 @@
+GARNIER Antoine
+Projet de compilation
+
+Pour lancer le programme :
+	Lancer le fichier script.sh : ./script.sh
+	Lancer le programme avec le fichier test.txt par exemple : ./Projet\ 2015-2016 test.txt
+
+
+Fonctions implementees :
+	Lecture du fichier .txt avec les formes desirees
+	Bonne reconnaissance des figures et parametres du fichier lu
+	- Affichage encore en cours de developpement , partie Qt en theorie prete -
+
+Principales difficultes rencontrees :
+	Echange des donnees entre les fichiers lex et yacc
+
+Problemes restants avec :
+	Les types que j'ai créés pour pouvoir reconnaitre les options (couleur, rotation... etc)
